@@ -27,7 +27,7 @@ The local knowledge base is stored in `data/knowledge_base.md` and includes:
 
 - Python 3.9+
 - LangGraph + LangChain
-- Gemini 1.5 Flash (`langchain-google-genai`)
+- Gemini 2.5 Flash (`langchain-google-genai`)
 - FAISS (`faiss-cpu`) for local vector retrieval
 - FastAPI for HTTP endpoint
 
