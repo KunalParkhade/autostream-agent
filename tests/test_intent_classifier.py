@@ -27,3 +27,8 @@ def test_strict_json_parse_success():
 def test_json_parse_fallback_default():
     llm = DummyLLM("not-json")
     assert classify_intent("tell me pricing", llm) == "product_or_pricing_inquiry"
+
+
+def test_greeting_word_boundary_no_false_positive():
+    llm = DummyLLM('{"intent":"product_or_pricing_inquiry"}')
+    assert classify_intent("shipping pricing", llm) == "product_or_pricing_inquiry"

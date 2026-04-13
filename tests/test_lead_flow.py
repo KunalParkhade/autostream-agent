@@ -13,6 +13,14 @@ def test_extract_fields_from_text():
     assert updated["email"] == "kunal@email.com"
     assert updated["platform"] == "YouTube"
 
+
+def test_i_am_phrase_not_always_name():
+    fields = {"name": None, "email": None, "platform": None}
+    updated = extract_lead_fields("I am ready to start trial for YouTube", fields)
+    assert updated["name"] is None
+    assert updated["platform"] == "YouTube"
+
+
 def test_missing_fields():
     missing = missing_required_fields("Kunal", None, "YouTube")
     assert missing == ["email"]

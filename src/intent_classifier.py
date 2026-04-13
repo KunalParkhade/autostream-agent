@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from typing import Literal
 
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -42,6 +43,12 @@ GREETING_KEYWORDS = (
 )
 
 
+GREETING_PATTERN = re.compile(
+    r"\b(?:" + "|".join(re.escape(keyword) for keyword in GREETING_KEYWORDS) + r")\b",
+    flags=re.IGNORECASE,
+)
+
+
 CLASSIFIER_SYSTEM_PROMPT = """You are an intent classifier.
 Return only strict JSON with this schema:
 {"intent":"casual_greeting|product_or_pricing_inquiry|high_intent_lead"}
@@ -55,7 +62,7 @@ def _rule_override(text: str) -> IntentLabel | None:
     if any(keyword in lowered for keyword in HIGH_INTENT_KEYWORDS):
         return "high_intent_lead"
 
-    if any(keyword in lowered for keyword in GREETING_KEYWORDS) and len(lowered.split()) <= 5:
+    if GREETING_PATTERN.search(text) and len(lowered.split()) <= 5:
         return "casual_greeting"
 
     return None

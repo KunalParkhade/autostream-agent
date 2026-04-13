@@ -3,7 +3,11 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+from threading import Lock
 from typing import Any, Dict
+
+
+LEADS_FILE_LOCK = Lock()
 
 
 def mock_lead_capture(name: str, email: str, platform: str) -> str:
@@ -21,10 +25,12 @@ def append_lead_json(file_path: Path, name: str, email: str, platform: str, sess
         "session_id": session_id,
     }
 
-    if not file_path.exists():
-        file_path.write_text("[]\n", encoding="utf-8")
+    with LEADS_FILE_LOCK:
+        if not file_path.exists():
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.write_text("[]\n", encoding="utf-8")
 
-    existing = json.loads(file_path.read_text(encoding="utf-8"))
-    existing.append(record)
-    file_path.write_text(json.dumps(existing, indent=2) + "\n", encoding="utf-8")
+        existing = json.loads(file_path.read_text(encoding="utf-8"))
+        existing.append(record)
+        file_path.write_text(json.dumps(existing, indent=2) + "\n", encoding="utf-8")
     return record
